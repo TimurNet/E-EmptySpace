@@ -1,19 +1,19 @@
-// Плагин для добавления пустого пробела перед названиями пропертисов компонентов
-// Анализирует выделенные компоненты и добавляет пустой пробел только в названия пропертисов
+// Plugin for adding empty space before component property names
+// Analyzes selected components and adds empty space only to property names
 
-// Невидимый большой пробел (Em Space - U+2003)
+// Invisible large space (Em Space - U+2003)
 const EMPTY_SPACE = '\u2003';
 
-// Функция для добавления пустого пробела в начало строки, если его там нет
+// Function to add empty space at the beginning of string if it's not already there
 function addEmptySpaceToName(name: string): string {
-  // Проверяем, начинается ли название уже с невидимого пробела
+  // Check if name already starts with invisible space
   if (name.startsWith(EMPTY_SPACE)) {
     return name;
   }
   return EMPTY_SPACE + name;
 }
 
-// Функция для получения всех ключей объекта
+// Function to get all object keys
 function getObjectKeys(obj: Record<string, any>): string[] {
   const keys: string[] = [];
   for (const key in obj) {
@@ -24,9 +24,9 @@ function getObjectKeys(obj: Record<string, any>): string[] {
   return keys;
 }
 
-// Функция для извлечения чистого названия пропертиса (без суффикса #0:0)
+// Function to extract clean property name (without suffix #0:0)
 function getCleanPropertyName(propertyKey: string): string {
-  // Убираем суффикс вида #0:0 из названия пропертиса
+  // Remove suffix like #0:0 from property name
   const hashIndex = propertyKey.indexOf('#');
   if (hashIndex !== -1) {
     return propertyKey.substring(0, hashIndex);
@@ -34,11 +34,11 @@ function getCleanPropertyName(propertyKey: string): string {
   return propertyKey;
 }
 
-// Функция для обработки пропертисов компонента
+// Function to process component properties
 function processComponentProperties(component: ComponentNode): number {
   let processedCount = 0;
   
-  // Обрабатываем пропертисы компонента
+  // Process component properties
   if (component.componentPropertyDefinitions) {
     const propertyDefinitions = component.componentPropertyDefinitions;
     const propertyKeys = getObjectKeys(propertyDefinitions);
@@ -46,21 +46,21 @@ function processComponentProperties(component: ComponentNode): number {
     for (const propertyKey of propertyKeys) {
       const propertyDefinition = propertyDefinitions[propertyKey];
       
-      // Получаем чистое название пропертиса (без суффикса)
+      // Get clean property name (without suffix)
       const cleanPropertyName = getCleanPropertyName(propertyKey);
       const newPropertyName = addEmptySpaceToName(cleanPropertyName);
       
       if (cleanPropertyName !== newPropertyName) {
         try {
-          // Передаем только название пропертиса, не трогаем defaultValue
+          // Pass only property name, don't touch defaultValue
           const updatedPropertyId = component.editComponentProperty(propertyKey, {
             name: newPropertyName
           });
           
-          console.log(`Пропертис "${cleanPropertyName}" -> "${newPropertyName}" (${propertyDefinition.type}) в компоненте "${component.name}"`);
+          console.log(`Property "${cleanPropertyName}" -> "${newPropertyName}" (${propertyDefinition.type}) in component "${component.name}"`);
           processedCount++;
         } catch (error) {
-          console.log(`Ошибка при обновлении пропертиса "${cleanPropertyName}": ${error}`);
+          console.log(`Error updating property "${cleanPropertyName}": ${error}`);
         }
       }
     }
@@ -69,11 +69,11 @@ function processComponentProperties(component: ComponentNode): number {
   return processedCount;
 }
 
-// Функция для обработки пропертисов компонент сета
+// Function to process component set properties
 function processComponentSetProperties(componentSet: ComponentSetNode): number {
   let processedCount = 0;
   
-  // Обрабатываем пропертисы компонент сета
+  // Process component set properties
   if (componentSet.componentPropertyDefinitions) {
     const propertyDefinitions = componentSet.componentPropertyDefinitions;
     const propertyKeys = getObjectKeys(propertyDefinitions);
@@ -81,21 +81,21 @@ function processComponentSetProperties(componentSet: ComponentSetNode): number {
     for (const propertyKey of propertyKeys) {
       const propertyDefinition = propertyDefinitions[propertyKey];
       
-      // Получаем чистое название пропертиса (без суффикса)
+      // Get clean property name (without suffix)
       const cleanPropertyName = getCleanPropertyName(propertyKey);
       const newPropertyName = addEmptySpaceToName(cleanPropertyName);
       
       if (cleanPropertyName !== newPropertyName) {
         try {
-          // Передаем только название пропертиса, не трогаем defaultValue
+          // Pass only property name, don't touch defaultValue
           const updatedPropertyId = componentSet.editComponentProperty(propertyKey, {
             name: newPropertyName
           });
           
-          console.log(`Пропертис "${cleanPropertyName}" -> "${newPropertyName}" (${propertyDefinition.type}) в компонент сете "${componentSet.name}"`);
+          console.log(`Property "${cleanPropertyName}" -> "${newPropertyName}" (${propertyDefinition.type}) in component set "${componentSet.name}"`);
           processedCount++;
         } catch (error) {
-          console.log(`Ошибка при обновлении пропертиса "${cleanPropertyName}": ${error}`);
+          console.log(`Error updating property "${cleanPropertyName}": ${error}`);
         }
       }
     }
@@ -104,36 +104,36 @@ function processComponentSetProperties(componentSet: ComponentSetNode): number {
   return processedCount;
 }
 
-// Функция для обработки одного компонента
+// Function to process single component
 function processComponent(component: ComponentNode): number {
-  // Обрабатываем только пропертисы компонента, не название
+  // Process only component properties, not the name
   return processComponentProperties(component);
 }
 
-// Функция для обработки экземпляров компонентов
+// Function to process component instances
 function processComponentInstance(instance: InstanceNode): number {
-  // Экземпляры наследуют от основного компонента
-  // Обрабатываем основной компонент
+  // Instances inherit from main component
+  // Process main component
   const mainComponent = instance.mainComponent;
   if (mainComponent) {
-    console.log(`Обрабатываю основной компонент для экземпляра "${instance.name}"`);
+    console.log(`Processing main component for instance "${instance.name}"`);
     return processComponent(mainComponent);
   }
   return 0;
 }
 
-// Функция для обработки компонент сетов
+// Function to process component sets
 function processComponentSet(componentSet: ComponentSetNode): number {
-  // Обрабатываем только пропертисы компонент сета, не название и не отдельные варианты
+  // Process only component set properties, not name and not individual variants
   return processComponentSetProperties(componentSet);
 }
 
-// Основная функция плагина
+// Main plugin function
 function addEmptySpaceToProperties(): void {
   const selection = figma.currentPage.selection;
   
   if (selection.length === 0) {
-    figma.notify('Пожалуйста, выберите компоненты для обработки');
+    figma.notify('Please select components to process');
     figma.closePlugin();
     return;
   }
@@ -141,7 +141,7 @@ function addEmptySpaceToProperties(): void {
   let totalProcessedCount = 0;
   let skippedCount = 0;
   
-  // Обрабатываем каждый выделенный элемент
+  // Process each selected element
   for (const node of selection) {
     switch (node.type) {
       case 'COMPONENT':
@@ -157,21 +157,21 @@ function addEmptySpaceToProperties(): void {
         break;
         
       default:
-        console.log(`Пропущен элемент типа ${node.type}: ${node.name}`);
+        console.log(`Skipped element type ${node.type}: ${node.name}`);
         skippedCount++;
         break;
     }
   }
   
-  // Показываем результат
+  // Show result
   if (totalProcessedCount > 0) {
-    figma.notify(`Обработано пропертисов: ${totalProcessedCount}${skippedCount > 0 ? `, пропущено элементов: ${skippedCount}` : ''}`);
+    figma.notify(`Processed ${totalProcessedCount} properties${skippedCount > 0 ? `, skipped ${skippedCount} elements` : ''}`);
   } else {
-    figma.notify('Не найдено пропертисов для обработки. Выберите компоненты с пропертисами.');
+    figma.notify('No properties found to process. Select components with properties.');
   }
   
   figma.closePlugin();
 }
 
-// Запускаем плагин сразу
+// Run plugin immediately
 addEmptySpaceToProperties();
