@@ -5,7 +5,7 @@ TAGLINE:
 Add invisible space to component property names
 
 CATEGORY:
-Developer Tools
+Design tools
 
 TAGS:
 properties, components, spacing, developer, tools
@@ -13,25 +13,24 @@ properties, components, spacing, developer, tools
 DESCRIPTION:
 E-EmptySpace helps organize component properties by adding invisible Em Space characters to property names. This creates visual spacing in the properties panel without affecting functionality.
 
-✅ WHAT IT DOES:
+What it does:
 • Adds invisible Em Space (U+2003) before property names
 • Works with Text, Boolean, Instance Swap, and Variant properties  
 • Processes components, instances, and component sets
 • Preserves all property values and instance settings
 
-❌ WHAT IT DOESN'T TOUCH:
+What id doesn't touch: 
 • Component names
 • Property values
 • Instance configurations
 
-🚀 HOW TO USE:
+How to use:
 1. Select components with properties
 2. Run E-EmptySpace plugin  
 3. Done! Property names now have invisible spacing
 
-Perfect for design systems where property organization matters. The invisible spacing helps group related properties visually while maintaining full compatibility with existing components and instances.
 
-Example: ButtonText → ⠀ButtonText (invisible space added)
+Perfect for design systems where property organization matters. The invisible spacing helps group related properties visually while maintaining full compatibility with existing components and instances.
 
 SUPPORT CONTACT:
 [Your email/website/GitHub]
